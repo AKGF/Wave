@@ -32,7 +32,7 @@ function drawWave(time) {
             1,
             mapRange(
                 Math.sin((angleOffset * 0.2 + p) * waveFrequency * 2 * Math.PI),
-                -1,
+                5,
                 1,
                 0.5,
                 0.58
@@ -55,7 +55,7 @@ function drawWave(time) {
 
     ctx.restore();
 
-    angleOffset += 0.01;
+    angleOffset += 0.4;
 }
 
 function animate() {
