@@ -5,12 +5,16 @@ canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
 const centerX = canvas.width / 2;
-const centerY = canvas.height / 2;
+const centerY = canvas.height / 3.2;
 const radius = 200;
-const waveDetail = 250;
-const waveAmplitude = 30;
-const waveFrequency = 7;
-let angleOffset = 0;
+const points = 250;
+const lineWidth = 2;
+const speed = 0.3;
+const shadowBlur = 0;
+const color = 'rgba(0, 150, 255, 0.8)';
+const TAO = Math.PI * 2;
+
+let offset = 0;
 
 function mapRange(a, b, c, d, e) {
     return ((a - b) * (e - d)) / (c - b) + d;
@@ -18,29 +22,37 @@ function mapRange(a, b, c, d, e) {
 
 function drawWave(time) {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+
     ctx.save();
     ctx.translate(centerX, centerY);
+    ctx.rotate(Math.PI);
 
+    ctx.strokeStyle = color;
+    ctx.fillStyle = 'rgba(0, 100, 0, 0)';
+    ctx.lineWidth = lineWidth;
+    ctx.shadowColor = color;
+    ctx.shadowBlur = shadowBlur;
     ctx.beginPath();
-    for (let i = 0; i <= waveDetail; i++) {
-        const p = i / waveDetail;
-        const angle = p * 2 * Math.PI;
+
+    for (let i = 0; i <= points; i++) {
+        const p = i / points;
+        const times = 7;
         const phase = mapRange(
-            Math.cos(p * 2 * Math.PI),
+            Math.cos(p * TAO),
             -1,
             1,
             1,
             mapRange(
-                Math.sin((angleOffset * 0.2 + p) * waveFrequency * 2 * Math.PI),
-                5,
-                1,
+                Math.sin(((offset + time * speed) * 0.2 + p) * times * TAO),
+                -1,
+                3,
                 0.5,
                 0.58
             )
         );
 
-        const x = phase * radius * Math.sin(angle);
-        const y = phase * radius * Math.cos(angle);
+        const x = phase * radius * Math.sin(p * TAO);
+        const y = phase * radius * Math.cos(p * TAO);
 
         if (i === 0) {
             ctx.moveTo(x, y);
@@ -48,14 +60,12 @@ function drawWave(time) {
             ctx.lineTo(x, y);
         }
     }
-    ctx.closePath();
-    ctx.lineWidth = 2;
-    ctx.strokeStyle = 'rgba(0, 150, 255, 0.8)';
-    ctx.stroke();
 
+    ctx.fill();
+    ctx.stroke();
     ctx.restore();
 
-    angleOffset += 0.4;
+    offset += 0.01;
 }
 
 function animate() {
